@@ -1,7 +1,10 @@
 # 🚀 HireTrack — Smart Job Application Tracker
 
 HireTrack is a full-stack MERN application designed as a **personal CRM for job seekers**. It helps users manage job applications, track progress, analyze skill gaps, and compare offers — all in one place.
-
+<div class="animate-pulse space-y-3">
+  <div class="h-4 bg-gray-700 rounded w-3/4"></div>
+  <div class="h-4 bg-gray-700 rounded w-1/2"></div>
+</div>
 ---
 
 ## 📌 Features
