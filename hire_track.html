@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HireTrack — Smart Job Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0b0d;
+    --bg2: #111318;
+    --bg3: #181c22;
+    --bg4: #1f242d;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --muted2: #9ca3af;
+    --accent: #00d084;
+    --accent2: #00a86b;
+    --accent-glow: rgba(0,208,132,0.15);
+    --amber: #f59e0b;
+    --amber-bg: rgba(245,158,11,0.1);
+    --red: #ef4444;
+    --red-bg: rgba(239,68,68,0.1);
+    --blue: #3b82f6;
+    --blue-bg: rgba(59,130,246,0.1);
+    --purple: #a855f7;
+    --purple-bg: rgba(168,85,247,0.1);
+    --font-display: 'Syne', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --font-serif: 'Instrument Serif', serif;
+    --r: 8px;
+    --r-lg: 14px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-display);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    overflow-x: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 220px;
+    min-height: 100vh;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 28px 0;
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    padding: 0 24px 28px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  .logo-mark {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+
+  .logo-mark span { color: var(--accent); }
+
+  .logo-sub {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .nav-section {
+    padding: 0 12px;
+    margin-bottom: 6px;
+  }
+
+  .nav-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0 12px;
+    margin-bottom: 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: var(--r);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted2);
+    transition: all 0.18s ease;
+    position: relative;
+    user-select: none;
+  }
+
+  .nav-item:hover { background: var(--bg3); color: var(--text); }
+
+  .nav-item.active {
+    background: var(--accent-glow);
+    color: var(--accent);
+  }
+
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 4px; bottom: 4px;
+    width: 3px;
+    background: var(--accent);
+    border-radius: 0 3px 3px 0;
+  }
+
+  .nav-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.7;
+    flex-shrink: 0;
+  }
+
+  .nav-item.active .nav-icon { opacity: 1; }
+
+  .nav-badge {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    background: var(--bg4);
+    padding: 1px 7px;
+    border-radius: 20px;
+    color: var(--muted2);
+  }
+
+  .nav-item.active .nav-badge { background: var(--accent2); color: #fff; }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 20px 24px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .user-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--blue));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #0a0b0d;
+    flex-shrink: 0;
+  }
+
+  .user-name { font-size: 13px; font-weight: 600; }
+  .user-role { font-size: 11px; color: var(--muted); }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: 220px;
+    flex: 1;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    height: 60px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-title {
+    font-size: 15px;
+    font-weight: 700;
+    flex: 1;
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 7px 14px;
+    width: 220px;
+    transition: border-color 0.2s;
+  }
+
+  .search-box:focus-within { border-color: var(--accent); }
+
+  .search-box input {
+    background: none;
+    border: none;
+    outline: none;
+    font-family: var(--font-display);
+    font-size: 12px;
+    color: var(--text);
+    width: 100%;
+  }
+
+  .search-box input::placeholder { color: var(--muted); }
+
+  .search-icon { width: 14px; height: 14px; color: var(--muted); flex-shrink: 0; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 16px;
+    border-radius: var(--r);
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.18s ease;
+    white-space: nowrap;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0a0b0d;
+  }
+
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: var(--bg3);
+    color: var(--muted2);
+    border: 1px solid var(--border);
+  }
+
+  .btn-ghost:hover { border-color: var(--border2); color: var(--text); }
+
+  /* ── PAGES ── */
+  .page { display: none; padding: 28px 32px; animation: fadeIn 0.25s ease; }
+  .page.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── STATS GRID ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .stat-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    opacity: 0.06;
+  }
+
+  .stat-card.c-green::after { background: var(--accent); }
+  .stat-card.c-amber::after { background: var(--amber); }
+  .stat-card.c-blue::after { background: var(--blue); }
+  .stat-card.c-purple::after { background: var(--purple); }
+
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .stat-value {
+    font-family: var(--font-serif);
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-card.c-green .stat-value { color: var(--accent); }
+  .stat-card.c-amber .stat-value { color: var(--amber); }
+  .stat-card.c-blue .stat-value { color: var(--blue); }
+  .stat-card.c-purple .stat-value { color: var(--purple); }
+
+  .stat-sub { font-size: 11px; color: var(--muted); }
+
+  /* ── SECTION HEADER ── */
+  .section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted2);
+  }
+
+  /* ── KANBAN ── */
+  .kanban-wrap {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .k-col {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 12px;
+    min-height: 280px;
+    min-width: 130px;
+    transition: border-color 0.2s;
+  }
+
+  .k-col.drag-over {
+    border-color: var(--accent);
+    background: rgba(0,208,132,0.04);
+  }
+
+  .k-col-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .k-col-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .k-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  .k-count {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    background: var(--bg4);
+    color: var(--muted);
+    padding: 1px 6px;
+    border-radius: 20px;
+  }
+
+  .k-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 10px;
+    margin-bottom: 8px;
+    cursor: grab;
+    transition: all 0.18s ease;
+    position: relative;
+  }
+
+  .k-card:hover {
+    border-color: var(--border2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+
+  .k-card:active { cursor: grabbing; opacity: 0.7; }
+  .k-card.dragging { opacity: 0.4; }
+
+  .k-card-co {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .k-card-role {
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .k-card-footer { display: flex; align-items: center; justify-content: space-between; }
+
+  .match-badge {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    padding: 3px 7px;
+    border-radius: 20px;
+  }
+
+  .match-high { background: rgba(0,208,132,0.12); color: var(--accent); }
+  .match-mid { background: rgba(245,158,11,0.12); color: var(--amber); }
+  .match-low { background: rgba(239,68,68,0.12); color: var(--red); }
+
+  .k-card-date {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--muted);
+  }
+
+  /* Stage colors */
+  .dot-applied { background: #3b82f6; }
+  .dot-screen { background: #f59e0b; }
+  .dot-interview { background: #a855f7; }
+  .dot-offer { background: #00d084; }
+  .dot-accepted { background: #10b981; }
+  .dot-rejected { background: #ef4444; }
+
+  /* ── JOB FEED ── */
+  .feed-filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+
+  .filter-pill {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--muted2);
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .filter-pill:hover { border-color: var(--border2); color: var(--text); }
+  .filter-pill.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); }
+
+  .jobs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px;
+  }
+
+  .job-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .job-card:hover {
+    border-color: var(--border2);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+  }
+
+  .job-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+
+  .job-logo {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--r);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .job-title { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+  .job-company { font-size: 12px; color: var(--muted2); }
+
+  .job-meta { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+
+  .job-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: var(--r);
+    background: var(--bg4);
+    color: var(--muted2);
+    border: 1px solid var(--border);
+  }
+
+  .job-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .job-salary { font-family: var(--font-mono); font-size: 12px; color: var(--accent); font-weight: 500; }
+  .job-location { font-size: 11px; color: var(--muted); }
+
+  .apply-btn {
+    font-size: 11px;
+    padding: 6px 14px;
+    border-radius: var(--r);
+    background: var(--accent-glow);
+    border: 1px solid rgba(0,208,132,0.3);
+    color: var(--accent);
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-weight: 600;
+    transition: all 0.18s;
+  }
+
+  .apply-btn:hover { background: var(--accent); color: #0a0b0d; }
+
+  /* ── SKILL GAP ── */
+  .skill-gap-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 28px;
+  }
+
+  .panel {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 22px;
+  }
+
+  .panel-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .panel-title-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--r);
+    background: var(--accent-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+
+  .skill-item {
+    margin-bottom: 14px;
+  }
+
+  .skill-item:last-child { margin-bottom: 0; }
+
+  .skill-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .skill-name {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text);
+  }
+
+  .skill-pct {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted2);
+  }
+
+  .skill-bar {
+    height: 4px;
+    background: var(--bg4);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .skill-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    transition: width 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+    width: 0;
+  }
+
+  .skill-fill.amber-fill { background: linear-gradient(90deg, #d97706, var(--amber)); }
+  .skill-fill.red-fill { background: linear-gradient(90deg, #dc2626, var(--red)); }
+
+  .recommend-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 14px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    transition: border-color 0.18s;
+  }
+
+  .recommend-card:hover { border-color: var(--accent); }
+  .rec-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .rec-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .rec-desc { font-size: 11px; color: var(--muted2); line-height: 1.5; }
+  .rec-tag { display: inline-block; font-family: var(--font-mono); font-size: 9px; background: var(--accent-glow); color: var(--accent); padding: 2px 7px; border-radius: 20px; margin-top: 6px; }
+
+  /* ── OFFER COMPARISON ── */
+  .offers-wrap { overflow-x: auto; }
+
+  .offers-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+  }
+
+  .offers-table th {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-align: left;
+    padding: 10px 16px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .offers-table th:first-child { border-radius: var(--r) 0 0 0; }
+  .offers-table th:last-child { border-radius: 0 var(--r) 0 0; }
+
+  .offers-table td {
+    padding: 14px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  .offers-table tr:last-child td { border-bottom: none; }
+
+  .offers-table tr:hover td { background: var(--bg3); }
+
+  .offers-table .highlight td {
+    background: rgba(0,208,132,0.04);
+    border-bottom-color: var(--border);
+  }
+
+  .ctc-val {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .company-name { font-weight: 700; font-size: 14px; }
+  .company-role { font-size: 11px; color: var(--muted2); margin-top: 2px; }
+
+  .tag-pill {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: var(--bg4);
+    color: var(--muted2);
+    border: 1px solid var(--border);
+    margin: 2px 2px 2px 0;
+  }
+
+  .best-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    background: var(--accent-glow);
+    color: var(--accent);
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 1px solid rgba(0,208,132,0.25);
+    margin-left: 8px;
+  }
+
+  /* ── RADAR / SCORE CHART ── */
+  .score-ring {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .score-ring svg { transform: rotate(-90deg); }
+
+  .score-text {
+    position: absolute;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  /* ── RESUME UPLOAD ── */
+  .upload-zone {
+    border: 2px dashed var(--border2);
+    border-radius: var(--r-lg);
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--bg2);
+  }
+
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+  }
+
+  .upload-icon { font-size: 32px; margin-bottom: 12px; }
+  .upload-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .upload-hint { font-size: 12px; color: var(--muted); }
+
+  .parsed-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 16px;
+  }
+
+  .skill-chip {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--muted2);
+    animation: popIn 0.3s ease;
+  }
+
+  .skill-chip.highlight-chip {
+    background: var(--accent-glow);
+    border-color: rgba(0,208,132,0.3);
+    color: var(--accent);
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  /* ── NOTIFICATIONS ── */
+  .notif-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .notif-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    transition: border-color 0.18s;
+  }
+
+  .notif-item:hover { border-color: var(--border2); }
+  .notif-item.unread { border-left: 3px solid var(--accent); }
+  .notif-item.warn { border-left: 3px solid var(--amber); }
+
+  .notif-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .notif-content .notif-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .notif-content .notif-desc { font-size: 12px; color: var(--muted2); }
+  .notif-time { font-family: var(--font-mono); font-size: 10px; color: var(--muted); margin-top: 4px; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--r-lg);
+    padding: 28px;
+    max-width: 440px;
+    width: 90%;
+    animation: slideUp 0.25s ease;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+
+  .form-group { margin-bottom: 14px; }
+
+  .form-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .form-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 9px 14px;
+    font-family: var(--font-display);
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-input:focus { border-color: var(--accent); }
+
+  .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--bg3);
+    border: 1px solid var(--accent);
+    border-radius: var(--r);
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 9999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  /* ── ADD JOB CARD ── */
+  .add-card {
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: var(--r);
+    padding: 8px;
+    cursor: pointer;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    transition: all 0.18s;
+  }
+
+  .add-card:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+
+  /* score ring animation */
+  .ring-progress {
+    stroke-dasharray: 220;
+    stroke-dashoffset: 220;
+    transition: stroke-dashoffset 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+  .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">Hire<span>Track</span></div>
+    <div class="logo-sub">Job Application CRM</div>
+  </div>
+
+  <div class="nav-label">Workspace</div>
+  <div class="nav-section">
+    <div class="nav-item active" data-page="dashboard" onclick="navigate(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" data-page="pipeline" onclick="navigate(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="4" height="10" rx="1.5"/><rect x="6" y="1" width="4" height="12" rx="1.5"/><rect x="11" y="5" width="4" height="8" rx="1.5"/></svg>
+      Pipeline
+      <span class="nav-badge">11</span>
+    </div>
+    <div class="nav-item" data-page="jobs" onclick="navigate(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="12" height="10" rx="1.5"/><path d="M5 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><line x1="2" y1="8" x2="14" y2="8"/></svg>
+      Job Feed
+      <span class="nav-badge">24</span>
+    </div>
+  </div>
+
+  <div class="nav-label" style="margin-top:14px;">Analysis</div>
+  <div class="nav-section">
+    <div class="nav-item" data-page="skills" onclick="navigate(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L10 6H14L11 9L12 13L8 11L4 13L5 9L2 6H6Z"/></svg>
+      Skill Gap AI
+    </div>
+    <div class="nav-item" data-page="offers" onclick="navigate(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11L6 7L9 10L14 4"/><polyline points="10,4 14,4 14,8"/></svg>
+      Offer Compare
+      <span class="nav-badge">3</span>
+    </div>
+    <div class="nav-item" data-page="resume" onclick="navigate(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 2H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6z"/><polyline points="9,2 9,7 13,7"/><line x1="5" y1="9" x2="11" y2="9"/><line x1="5" y1="11" x2="9" y2="11"/></svg>
+      Resume Parser
+    </div>
+    <div class="nav-item" data-page="notifications" onclick="navigate(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8V5A4 4 0 0 0 4 5v3l-1.5 3h11L12 8Z"/><path d="M8 14a1 1 0 0 1-1-1h2a1 1 0 0 1-1 1Z"/></svg>
+      Alerts
+      <span class="nav-badge">5</span>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">RS</div>
+      <div>
+        <div class="user-name">Rahul Sharma</div>
+        <div class="user-role">Full-Stack Engineer</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Dashboard</div>
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><line x1="10.5" y1="10.5" x2="14" y2="14"/></svg>
+      <input type="text" placeholder="Search jobs, companies..." id="global-search" oninput="handleSearch()" />
+    </div>
+    <button class="btn btn-primary" onclick="openAddModal()">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg>
+      Add Application
+    </button>
+  </div>
+
+  <!-- DASHBOARD PAGE -->
+  <div class="page active" id="page-dashboard">
+    <div class="stats-grid">
+      <div class="stat-card c-blue">
+        <div class="stat-label">Total Applied</div>
+        <div class="stat-value">34</div>
+        <div class="stat-sub">+3 this week</div>
+      </div>
+      <div class="stat-card c-green">
+        <div class="stat-label">In Pipeline</div>
+        <div class="stat-value" id="pipeline-count">11</div>
+        <div class="stat-sub">Across 6 stages</div>
+      </div>
+      <div class="stat-card c-amber">
+        <div class="stat-label">Active Offers</div>
+        <div class="stat-value">3</div>
+        <div class="stat-sub">2 expiring soon</div>
+      </div>
+      <div class="stat-card c-purple">
+        <div class="stat-label">Avg Match Score</div>
+        <div class="stat-value">78%</div>
+        <div class="stat-sub">Based on your skills</div>
+      </div>
+    </div>
+
+    <div class="section-head">
+      <div class="section-title">Pipeline Overview</div>
+      <button class="btn btn-ghost" onclick="navigate(document.querySelector('[data-page=pipeline]'))">View full board →</button>
+    </div>
+
+    <!-- Mini kanban preview -->
+    <div class="kanban-wrap" id="kanban-board"></div>
+
+    <div class="two-col" style="margin-top:28px;">
+      <!-- Recent activity -->
+      <div class="panel">
+        <div class="panel-title">
+          <div class="panel-title-icon">⚡</div>
+          Recent Activity
+        </div>
+        <div class="notif-list" id="activity-list">
+          <div class="notif-item unread">
+            <div class="notif-dot" style="background:var(--accent)"></div>
+            <div class="notif-content">
+              <div class="notif-title">Atlassian moved to Interview</div>
+              <div class="notif-desc">SWE position — 91% match</div>
+              <div class="notif-time">2 hours ago</div>
+            </div>
+          </div>
+          <div class="notif-item unread">
+            <div class="notif-dot" style="background:var(--accent)"></div>
+            <div class="notif-content">
+              <div class="notif-title">New offer from Meesho</div>
+              <div class="notif-desc">₹32 LPA — SDE II role</div>
+              <div class="notif-time">Yesterday</div>
+            </div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-dot" style="background:var(--muted)"></div>
+            <div class="notif-content">
+              <div class="notif-title">Zepto application sent</div>
+              <div class="notif-desc">Backend Engineer — 92% match</div>
+              <div class="notif-time">2 days ago</div>
+            </div>
+          </div>
+          <div class="notif-item warn">
+            <div class="notif-dot" style="background:var(--amber)"></div>
+            <div class="notif-content">
+              <div class="notif-title">Follow up: Freshworks</div>
+              <div class="notif-desc">Interview scheduled — no update</div>
+              <div class="notif-time">3 days ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top match jobs -->
+      <div class="panel">
+        <div class="panel-title">
+          <div class="panel-title-icon">🎯</div>
+          Top Matches Today
+        </div>
+        <div id="top-matches"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIPELINE PAGE -->
+  <div class="page" id="page-pipeline">
+    <div class="section-head">
+      <div class="section-title">Kanban Pipeline</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost">Filter</button>
+        <button class="btn btn-primary" onclick="openAddModal()">+ Add Card</button>
+      </div>
+    </div>
+    <div class="kanban-wrap" id="kanban-full"></div>
+    <div style="margin-top:14px;font-family:var(--font-mono);font-size:11px;color:var(--muted);">
+      Drag &amp; drop cards between stages to update status
+    </div>
+  </div>
+
+  <!-- JOB FEED PAGE -->
+  <div class="page" id="page-jobs">
+    <div class="section-head">
+      <div class="section-title">Job Feed</div>
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--muted);">24 jobs matched your profile</div>
+    </div>
+    <div class="feed-filters" id="feed-filters">
+      <div class="filter-pill active" onclick="filterJobs(this,'all')">All</div>
+      <div class="filter-pill" onclick="filterJobs(this,'90+')">90%+ Match</div>
+      <div class="filter-pill" onclick="filterJobs(this,'remote')">Remote</div>
+      <div class="filter-pill" onclick="filterJobs(this,'fullstack')">Full-Stack</div>
+      <div class="filter-pill" onclick="filterJobs(this,'backend')">Backend</div>
+      <div class="filter-pill" onclick="filterJobs(this,'senior')">Senior</div>
+    </div>
+    <div class="jobs-grid" id="jobs-grid"></div>
+  </div>
+
+  <!-- SKILL GAP PAGE -->
+  <div class="page" id="page-skills">
+    <div class="skill-gap-grid">
+      <div class="panel">
+        <div class="panel-title">
+          <div class="panel-title-icon">📊</div>
+          Skills in Demand (from your pipeline)
+        </div>
+        <div id="skill-bars"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">
+          <div class="panel-title-icon">🤖</div>
+          AI Recommendations
+        </div>
+        <div id="ai-recs"></div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-title">
+          <div class="panel-title-icon">✅</div>
+          Your Current Skills
+        </div>
+        <div class="parsed-skills" id="current-skills"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">
+          <div class="panel-title-icon">🎓</div>
+          Profile Match Score
+        </div>
+        <div style="display:flex;align-items:center;gap:28px;padding:12px 0;">
+          <div class="score-ring">
+            <svg width="90" height="90" viewBox="0 0 90 90">
+              <circle cx="45" cy="45" r="35" stroke="var(--bg4)" stroke-width="8" fill="none"/>
+              <circle cx="45" cy="45" r="35" stroke="var(--accent)" stroke-width="8" fill="none"
+                class="ring-progress" id="match-ring" stroke-linecap="round"/>
+            </svg>
+            <div class="score-text" id="match-score-text">78%</div>
+          </div>
+          <div>
+            <div style="font-size:22px;font-weight:700;margin-bottom:6px;">Strong Match</div>
+            <div style="font-size:12px;color:var(--muted2);line-height:1.6;">Your skill set covers most requirements. Focus on Kubernetes and Redis to push past 90%.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OFFER COMPARE PAGE -->
+  <div class="page" id="page-offers">
+    <div class="section-head">
+      <div class="section-title">Offer Comparison</div>
+      <button class="btn btn-primary" onclick="showToast('Comparison report generated!')">Export PDF</button>
+    </div>
+    <div class="panel offers-wrap" style="margin-bottom:18px;">
+      <table class="offers-table" id="offers-table"></table>
+    </div>
+    <div class="three-col">
+      <div class="panel" style="text-align:center;">
+        <div style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px;">Best CTC</div>
+        <div style="font-size:28px;font-weight:800;color:var(--accent);font-family:var(--font-serif);">₹32 LPA</div>
+        <div style="font-size:12px;color:var(--muted2);margin-top:4px;">Meesho — SDE II</div>
+      </div>
+      <div class="panel" style="text-align:center;">
+        <div style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px;">Deadline Closest</div>
+        <div style="font-size:28px;font-weight:800;color:var(--amber);font-family:var(--font-serif);">4 days</div>
+        <div style="font-size:12px;color:var(--muted2);margin-top:4px;">Licious — respond by Apr 16</div>
+      </div>
+      <div class="panel" style="text-align:center;">
+        <div style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px;">Best Perks</div>
+        <div style="font-size:28px;font-weight:800;color:var(--purple);font-family:var(--font-serif);">Jupiter</div>
+        <div style="font-size:12px;color:var(--muted2);margin-top:4px;">ESOP + Health + Flexi</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESUME PAGE -->
+  <div class="page" id="page-resume">
+    <div class="two-col">
+      <div>
+        <div class="section-head"><div class="section-title">Upload Resume</div></div>
+        <div class="upload-zone" id="upload-zone" onclick="simulateParse()" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="event.preventDefault();this.classList.remove('drag-over');simulateParse()">
+          <div class="upload-icon">📄</div>
+          <div class="upload-title">Drop your resume PDF here</div>
+          <div class="upload-hint">or click to browse — PDF, max 5MB</div>
+        </div>
+        <div id="parse-result" style="margin-top:18px;display:none;">
+          <div class="panel">
+            <div class="panel-title"><div class="panel-title-icon">✨</div>Parsed Skills</div>
+            <div class="parsed-skills" id="resume-skills"></div>
+            <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+              <div style="font-size:12px;color:var(--muted2);margin-bottom:8px;">Experience extracted:</div>
+              <div id="resume-exp"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="section-head"><div class="section-title">Profile Summary</div></div>
+        <div class="panel" style="margin-bottom:14px;">
+          <div class="panel-title"><div class="panel-title-icon">👤</div>Rahul Sharma</div>
+          <div style="font-size:12px;color:var(--muted2);line-height:1.7;margin-bottom:14px;">Full-Stack Engineer with 3+ years of experience building scalable web applications with the MERN stack. Strong background in REST API design, JWT authentication, and cloud deployments.</div>
+          <div class="parsed-skills">
+            <span class="skill-chip highlight-chip">React.js</span>
+            <span class="skill-chip highlight-chip">Node.js</span>
+            <span class="skill-chip highlight-chip">MongoDB</span>
+            <span class="skill-chip highlight-chip">Express.js</span>
+            <span class="skill-chip">Docker</span>
+            <span class="skill-chip">TypeScript</span>
+            <span class="skill-chip">PostgreSQL</span>
+            <span class="skill-chip">REST APIs</span>
+            <span class="skill-chip">JWT</span>
+            <span class="skill-chip">Git</span>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title"><div class="panel-title-icon">📈</div>Parse Stats</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div style="background:var(--bg3);border-radius:var(--r);padding:12px;">
+              <div class="stat-label">Skills found</div>
+              <div style="font-size:20px;font-weight:700;color:var(--accent);">10</div>
+            </div>
+            <div style="background:var(--bg3);border-radius:var(--r);padding:12px;">
+              <div class="stat-label">Parse time</div>
+              <div style="font-size:20px;font-weight:700;color:var(--amber);">1.8s</div>
+            </div>
+            <div style="background:var(--bg3);border-radius:var(--r);padding:12px;">
+              <div class="stat-label">Projects</div>
+              <div style="font-size:20px;font-weight:700;color:var(--blue);">4</div>
+            </div>
+            <div style="background:var(--bg3);border-radius:var(--r);padding:12px;">
+              <div class="stat-label">Exp. years</div>
+              <div style="font-size:20px;font-weight:700;color:var(--purple);">3+</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS PAGE -->
+  <div class="page" id="page-notifications">
+    <div class="section-head">
+      <div class="section-title">Smart Alerts</div>
+      <button class="btn btn-ghost" onclick="showToast('All notifications marked as read')">Mark all read</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div>
+        <div style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:10px;">New Job Matches</div>
+        <div class="notif-list" id="job-alerts"></div>
+      </div>
+      <div>
+        <div style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:10px;">Reminders</div>
+        <div class="notif-list" id="reminders"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD APPLICATION MODAL -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal">
+    <div class="modal-title">Add Application</div>
+    <div class="form-group">
+      <label class="form-label">Company</label>
+      <input class="form-input" type="text" id="form-company" placeholder="e.g. Stripe" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Role</label>
+      <input class="form-input" type="text" id="form-role" placeholder="e.g. Senior Backend Engineer" />
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group">
+        <label class="form-label">Stage</label>
+        <select class="form-input" id="form-stage">
+          <option value="applied">Applied</option>
+          <option value="screen">Phone Screen</option>
+          <option value="interview">Interview</option>
+          <option value="offer">Offer</option>
+          <option value="accepted">Accepted</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Match %</label>
+        <input class="form-input" type="number" id="form-match" placeholder="e.g. 85" min="0" max="100" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addApplication()">Add Application</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span>✓</span>
+  <span id="toast-msg">Done!</span>
+</div>
+
+<script>
+// ── DATA ──
+const stages = [
+  { id: 'applied', label: 'Applied', dot: 'dot-applied' },
+  { id: 'screen', label: 'Screen', dot: 'dot-screen' },
+  { id: 'interview', label: 'Interview', dot: 'dot-interview' },
+  { id: 'offer', label: 'Offer', dot: 'dot-offer' },
+  { id: 'accepted', label: 'Accepted', dot: 'dot-accepted' },
+  { id: 'rejected', label: 'Rejected', dot: 'dot-rejected' }
+];
+
+let cards = [
+  { id:1, co:'Zepto', role:'Backend Eng.', stage:'applied', match:92, date:'Apr 10' },
+  { id:2, co:'Razorpay', role:'SDE II', stage:'applied', match:87, date:'Apr 9' },
+  { id:3, co:'Postman', role:'Full-Stack', stage:'applied', match:71, date:'Apr 8' },
+  { id:4, co:'Swiggy', role:'Node.js Eng.', stage:'screen', match:88, date:'Apr 6' },
+  { id:5, co:'CRED', role:'SDE II', stage:'screen', match:74, date:'Apr 5' },
+  { id:6, co:'Atlassian', role:'SWE', stage:'interview', match:91, date:'Apr 3' },
+  { id:7, co:'Freshworks', role:'Backend', stage:'interview', match:83, date:'Apr 2' },
+  { id:8, co:'Meesho', role:'SDE II', stage:'offer', match:89, date:'Mar 28' },
+  { id:9, co:'Licious', role:'Full-Stack', stage:'offer', match:76, date:'Mar 27' },
+  { id:10, co:'Jupiter', role:'Node.js Eng.', stage:'offer', match:85, date:'Mar 26' },
+  { id:11, co:'Groww', role:'SDE II', stage:'accepted', match:94, date:'Mar 20' },
+  { id:12, co:'Google', role:'L4 SWE', stage:'rejected', match:61, date:'Mar 15' },
+  { id:13, co:'Flipkart', role:'SDE II', stage:'rejected', match:68, date:'Mar 14' }
+];
+
+const jobsData = [
+  { id:1, co:'Stripe', role:'Senior Backend Engineer', logo:'S', bg:'#635BFF', match:95, salary:'₹55-70 LPA', loc:'Remote', tags:['Node.js','PostgreSQL','Kafka'], type:'backend senior' },
+  { id:2, co:'Notion', role:'Full-Stack Developer', logo:'N', bg:'#000', match:91, salary:'₹40-55 LPA', loc:'Remote', tags:['React','TypeScript','Go'], type:'fullstack remote' },
+  { id:3, co:'Razorpay', role:'SDE II — Payments', logo:'R', bg:'#2EB8E6', match:88, salary:'₹28-40 LPA', loc:'Bengaluru', tags:['Java','Spring','MySQL'], type:'backend' },
+  { id:4, co:'Figma', role:'Frontend Engineer', logo:'F', bg:'#A259FF', match:84, salary:'₹45-60 LPA', loc:'Remote', tags:['React','CSS','WebGL'], type:'fullstack remote' },
+  { id:5, co:'Swiggy', role:'Platform Engineer', logo:'Sw', bg:'#FC8019', match:79, salary:'₹22-35 LPA', loc:'Bengaluru', tags:['Go','Kubernetes','Redis'], type:'backend' },
+  { id:6, co:'Zepto', role:'Backend Engineer', logo:'Z', bg:'#8B5CF6', match:92, salary:'₹25-38 LPA', loc:'Mumbai', tags:['Node.js','MongoDB','Redis'], type:'backend' },
+  { id:7, co:'Atlassian', role:'Cloud SWE', logo:'A', bg:'#0052CC', match:90, salary:'₹50-65 LPA', loc:'Remote', tags:['Java','AWS','Kafka'], type:'senior remote 90+' },
+  { id:8, co:'Meesho', role:'SDE II', logo:'M', bg:'#F43F5E', match:87, salary:'₹28-42 LPA', loc:'Bengaluru', tags:['React','Node.js','MySQL'], type:'fullstack' }
+];
+
+const skillsData = [
+  { name:'Kubernetes', pct:82, type:'gap' },
+  { name:'Redis', pct:71, type:'gap' },
+  { name:'GraphQL', pct:58, type:'mid' },
+  { name:'System Design', pct:45, type:'mid' },
+  { name:'AWS Lambda', pct:37, type:'low' },
+  { name:'Kafka', pct:29, type:'low' }
+];
+
+const offersData = [
+  { id:1, co:'Meesho', role:'SDE II', ctc:'₹32 LPA', loc:'Bengaluru', join:'May 15', perks:'Health, ESOPs, WFH', deadline:'Apr 28', best:true },
+  { id:2, co:'Jupiter', role:'Node.js Eng.', ctc:'₹28 LPA', loc:'Bengaluru', join:'Jun 1', perks:'ESOP, Flexi, Health', deadline:'May 5', best:false },
+  { id:3, co:'Licious', role:'Full-Stack', ctc:'₹24 LPA', loc:'Remote', join:'May 20', perks:'WFH, Stock', deadline:'Apr 16', best:false }
+];
+
+let draggedCard = null;
+let currentFilter = 'all';
+
+// ── NAVIGATION ──
+function navigate(el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  const page = el.getAttribute('data-page');
+  document.getElementById('page-' + page).classList.add('active');
+  const titles = { dashboard:'Dashboard', pipeline:'Kanban Pipeline', jobs:'Job Feed', skills:'Skill Gap Analyzer', offers:'Offer Comparison', resume:'Resume Parser', notifications:'Smart Alerts' };
+  document.getElementById('topbar-title').textContent = titles[page] || page;
+  if (page === 'skills') setTimeout(animateSkillBars, 100);
+  if (page === 'skills') setTimeout(animateRing, 200);
+}
+
+// ── RENDER KANBAN ──
+function renderKanban(containerId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+
+  stages.forEach(stage => {
+    const stageCards = cards.filter(c => c.stage === stage.id);
+    const col = document.createElement('div');
+    col.className = 'k-col';
+    col.setAttribute('data-stage', stage.id);
+    col.addEventListener('dragover', e => { e.preventDefault(); col.classList.add('drag-over'); });
+    col.addEventListener('dragleave', () => col.classList.remove('drag-over'));
+    col.addEventListener('drop', e => { e.preventDefault(); col.classList.remove('drag-over'); dropCard(stage.id); });
+
+    col.innerHTML = `
+      <div class="k-col-head">
+        <div class="k-col-title">
+          <div class="k-dot ${stage.dot}"></div>
+          ${stage.label}
+        </div>
+        <div class="k-count">${stageCards.length}</div>
+      </div>
+    `;
+
+    stageCards.forEach(card => {
+      const matchClass = card.match >= 85 ? 'match-high' : card.match >= 70 ? 'match-mid' : 'match-low';
+      const div = document.createElement('div');
+      div.className = 'k-card';
+      div.setAttribute('draggable', true);
+      div.setAttribute('data-id', card.id);
+      div.innerHTML = `
+        <div class="k-card-co">${card.co}</div>
+        <div class="k-card-role">${card.role}</div>
+        <div class="k-card-footer">
+          <span class="match-badge ${matchClass}">${card.match}%</span>
+          <span class="k-card-date">${card.date}</span>
+        </div>
+      `;
+      div.addEventListener('dragstart', () => { draggedCard = card; div.classList.add('dragging'); });
+      div.addEventListener('dragend', () => div.classList.remove('dragging'));
+      col.appendChild(div);
+    });
+
+    const addDiv = document.createElement('div');
+    addDiv.className = 'add-card';
+    addDiv.textContent = '+ Add';
+    addDiv.onclick = () => { document.getElementById('form-stage').value = stage.id; openAddModal(); };
+    col.appendChild(addDiv);
+
+    container.appendChild(col);
+  });
+}
+
+function dropCard(targetStage) {
+  if (!draggedCard) return;
+  draggedCard.stage = targetStage;
+  draggedCard = null;
+  renderKanban('kanban-board');
+  renderKanban('kanban-full');
+  updatePipelineCount();
+  showToast('Card moved to ' + stages.find(s => s.id === targetStage).label);
+}
+
+function updatePipelineCount() {
+  const active = cards.filter(c => !['accepted','rejected'].includes(c.stage)).length;
+  document.getElementById('pipeline-count').textContent = active;
+}
+
+// ── RENDER JOBS ──
+function renderJobs(filter = 'all') {
+  const grid = document.getElementById('jobs-grid');
+  let filtered = jobsData;
+  if (filter !== 'all') filtered = jobsData.filter(j => j.type.includes(filter));
+  grid.innerHTML = filtered.map(j => {
+    const matchClass = j.match >= 90 ? 'match-high' : j.match >= 80 ? 'match-mid' : 'match-low';
+    return `
+    <div class="job-card">
+      <div class="job-card-top">
+        <div>
+          <div class="job-title">${j.role}</div>
+          <div class="job-company">${j.co}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+          <div class="job-logo" style="background:${j.bg}">${j.logo}</div>
+          <span class="match-badge ${matchClass}">${j.match}%</span>
+        </div>
+      </div>
+      <div class="job-meta">${j.tags.map(t => `<span class="job-tag">${t}</span>`).join('')}</div>
+      <div class="job-footer">
+        <div>
+          <div class="job-salary">${j.salary}</div>
+          <div class="job-location">${j.loc}</div>
+        </div>
+        <button class="apply-btn" onclick="applyJob('${j.co}')">Apply →</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterJobs(el, filter) {
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderJobs(filter);
+}
+
+function applyJob(co) {
+  const newCard = { id: Date.now(), co, role: 'Engineer', stage: 'applied', match: Math.floor(Math.random()*15+78), date: 'Apr 12' };
+  cards.push(newCard);
+  renderKanban('kanban-board');
+  renderKanban('kanban-full');
+  showToast(`Applied to ${co}!`);
+}
+
+// ── SKILL BARS ──
+function renderSkillBars() {
+  const container = document.getElementById('skill-bars');
+  container.innerHTML = skillsData.map(s => {
+    const fillClass = s.pct >= 70 ? '' : s.pct >= 50 ? 'amber-fill' : 'red-fill';
+    return `
+    <div class="skill-item">
+      <div class="skill-row">
+        <div class="skill-name">${s.name}</div>
+        <div class="skill-pct">${s.pct}% in demand</div>
+      </div>
+      <div class="skill-bar">
+        <div class="skill-fill ${fillClass}" data-pct="${s.pct}" style="width:0%"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function animateSkillBars() {
+  document.querySelectorAll('.skill-fill').forEach(el => {
+    el.style.width = el.getAttribute('data-pct') + '%';
+  });
+}
+
+function animateRing() {
+  const ring = document.getElementById('match-ring');
+  if (!ring) return;
+  const pct = 78;
+  const circumference = 220;
+  const offset = circumference - (pct / 100) * circumference;
+  ring.style.strokeDashoffset = offset;
+}
+
+// ── AI RECS ──
+function renderAIRecs() {
+  const recs = [
+    { icon:'☸', title:'Learn Kubernetes', desc:'82% of your target roles require K8s. Start with core concepts and Helm.', tag:'High Priority' },
+    { icon:'⚡', title:'Master Redis', desc:'71% match gap. Focus on caching patterns and pub/sub architecture.', tag:'Recommended' },
+    { icon:'🔷', title:'GraphQL Basics', desc:'Common in full-stack roles. Complete a course to bridge the gap.', tag:'Mid Priority' }
+  ];
+  document.getElementById('ai-recs').innerHTML = recs.map(r => `
+    <div class="recommend-card">
+      <div class="rec-icon">${r.icon}</div>
+      <div>
+        <div class="rec-title">${r.title}</div>
+        <div class="rec-desc">${r.desc}</div>
+        <div class="rec-tag">${r.tag}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderCurrentSkills() {
+  const skills = ['React.js','Node.js','MongoDB','Express.js','Docker','TypeScript','PostgreSQL','REST APIs','JWT','Git'];
+  document.getElementById('current-skills').innerHTML = skills.map((s,i) =>
+    `<span class="skill-chip${i<4?' highlight-chip':''}">${s}</span>`
+  ).join('');
+}
+
+// ── OFFERS TABLE ──
+function renderOffers() {
+  const thead = `<thead><tr>
+    <th>Company</th><th>CTC</th><th>Location</th><th>Joining</th><th>Perks</th><th>Deadline</th><th>Action</th>
+  </tr></thead>`;
+  const tbody = '<tbody>' + offersData.map(o => `
+    <tr class="${o.best ? 'highlight' : ''}">
+      <td>
+        <div class="company-name">${o.co}${o.best ? '<span class="best-tag">★ Best</span>' : ''}</div>
+        <div class="company-role">${o.role}</div>
+      </td>
+      <td><div class="ctc-val">${o.ctc}</div></td>
+      <td><span class="tag-pill">${o.loc}</span></td>
+      <td style="font-family:var(--font-mono);font-size:12px;">${o.join}</td>
+      <td>${o.perks.split(',').map(p => `<span class="tag-pill">${p.trim()}</span>`).join('')}</td>
+      <td style="font-family:var(--font-mono);font-size:12px;color:var(--amber);">${o.deadline}</td>
+      <td><button class="apply-btn" onclick="showToast('Opening ${o.co} offer details...')">Review →</button></td>
+    </tr>
+  `).join('') + '</tbody>';
+  document.getElementById('offers-table').innerHTML = thead + tbody;
+}
+
+// ── TOP MATCHES ──
+function renderTopMatches() {
+  const top = [...jobsData].sort((a,b) => b.match - a.match).slice(0,4);
+  document.getElementById('top-matches').innerHTML = top.map(j => {
+    const matchClass = j.match >= 90 ? 'match-high' : 'match-mid';
+    return `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="job-logo" style="background:${j.bg};width:30px;height:30px;font-size:11px;">${j.logo}</div>
+        <div>
+          <div style="font-size:12px;font-weight:600;">${j.role}</div>
+          <div style="font-size:11px;color:var(--muted);">${j.co} · ${j.salary}</div>
+        </div>
+      </div>
+      <span class="match-badge ${matchClass}">${j.match}%</span>
+    </div>`;
+  }).join('');
+}
+
+// ── NOTIFICATIONS ──
+function renderNotifications() {
+  const alerts = [
+    { title:'Stripe — Senior Backend', desc:'95% match! Node.js + PostgreSQL role. Remote.', time:'Just now', unread:true },
+    { title:'Atlassian — Cloud SWE', desc:'90% match. AWS + Java role. Remote.', time:'1h ago', unread:true },
+    { title:'Notion — Full-Stack Dev', desc:'91% match. React + TypeScript. Remote.', time:'3h ago', unread:false }
+  ];
+  const reminders = [
+    { title:'Follow up: Freshworks', desc:'Interview was 5 days ago. No update received.', time:'Today', warn:true },
+    { title:'Offer deadline: Licious', desc:'Respond by Apr 16 — 4 days remaining.', time:'Today', warn:true },
+    { title:'Offer deadline: Jupiter', desc:'Respond by May 5 — 23 days remaining.', time:'Apr 10', warn:false }
+  ];
+  document.getElementById('job-alerts').innerHTML = alerts.map(a => `
+    <div class="notif-item${a.unread ? ' unread':''}">
+      <div class="notif-dot" style="background:${a.unread?'var(--accent)':'var(--muted)'}"></div>
+      <div class="notif-content">
+        <div class="notif-title">${a.title}</div>
+        <div class="notif-desc">${a.desc}</div>
+        <div class="notif-time">${a.time}</div>
+      </div>
+    </div>`).join('');
+  document.getElementById('reminders').innerHTML = reminders.map(r => `
+    <div class="notif-item${r.warn?' warn':''}">
+      <div class="notif-dot" style="background:${r.warn?'var(--amber)':'var(--muted)'}"></div>
+      <div class="notif-content">
+        <div class="notif-title">${r.title}</div>
+        <div class="notif-desc">${r.desc}</div>
+        <div class="notif-time">${r.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── RESUME PARSER ──
+function simulateParse() {
+  const zone = document.getElementById('upload-zone');
+  zone.innerHTML = '<div class="upload-icon">⏳</div><div class="upload-title">Parsing resume...</div><div class="upload-hint">Extracting skills with AI</div>';
+  setTimeout(() => {
+    zone.innerHTML = '<div class="upload-icon">✅</div><div class="upload-title">resume_rahul_sharma.pdf</div><div class="upload-hint">Parsed in 1.8s</div>';
+    const result = document.getElementById('parse-result');
+    result.style.display = 'block';
+    const skills = ['React.js','Node.js','MongoDB','Express.js','Docker','TypeScript','PostgreSQL','JWT','Git','REST APIs'];
+    document.getElementById('resume-skills').innerHTML = skills.map((s,i) => {
+      const el = document.createElement('span');
+      el.className = 'skill-chip' + (i < 4 ? ' highlight-chip' : '');
+      el.textContent = s;
+      el.style.animationDelay = (i * 0.08) + 's';
+      return el.outerHTML;
+    }).join('');
+    document.getElementById('resume-exp').innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="background:var(--bg3);border-radius:var(--r);padding:10px 12px;">
+          <div style="font-size:12px;font-weight:600;">Full-Stack Developer — Startup XYZ</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">2022 – Present · MERN Stack</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:var(--r);padding:10px 12px;">
+          <div style="font-size:12px;font-weight:600;">Backend Intern — TechCorp</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">2021 – 2022 · Node.js, PostgreSQL</div>
+        </div>
+      </div>`;
+    showToast('Resume parsed — 10 skills extracted!');
+  }, 1800);
+}
+
+// ── MODAL ──
+function openAddModal() { document.getElementById('add-modal').classList.add('open'); }
+function closeModal() { document.getElementById('add-modal').classList.remove('open'); }
+
+document.getElementById('add-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+function addApplication() {
+  const co = document.getElementById('form-company').value.trim();
+  const role = document.getElementById('form-role').value.trim();
+  const stage = document.getElementById('form-stage').value;
+  const match = parseInt(document.getElementById('form-match').value) || 80;
+  if (!co || !role) { showToast('Please fill company and role'); return; }
+  cards.push({ id: Date.now(), co, role, stage, match, date: 'Apr 12' });
+  renderKanban('kanban-board');
+  renderKanban('kanban-full');
+  updatePipelineCount();
+  closeModal();
+  document.getElementById('form-company').value = '';
+  document.getElementById('form-role').value = '';
+  document.getElementById('form-match').value = '';
+  showToast(`Added ${co} — ${role}`);
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+// ── SEARCH ──
+function handleSearch() {
+  const q = document.getElementById('global-search').value.toLowerCase();
+  if (!q) { renderJobs(currentFilter); return; }
+  const filtered = jobsData.filter(j =>
+    j.co.toLowerCase().includes(q) || j.role.toLowerCase().includes(q)
+  );
+  const grid = document.getElementById('jobs-grid');
+  if (document.getElementById('page-jobs').classList.contains('active')) {
+    grid.innerHTML = filtered.map(j => {
+      const matchClass = j.match >= 90 ? 'match-high' : j.match >= 80 ? 'match-mid' : 'match-low';
+      return `<div class="job-card"><div class="job-card-top"><div><div class="job-title">${j.role}</div><div class="job-company">${j.co}</div></div><span class="match-badge ${matchClass}">${j.match}%</span></div><div class="job-footer"><div class="job-salary">${j.salary}</div><button class="apply-btn" onclick="applyJob('${j.co}')">Apply →</button></div></div>`;
+    }).join('');
+  }
+}
+
+// ── INIT ──
+renderKanban('kanban-board');
+renderKanban('kanban-full');
+renderJobs();
+renderSkillBars();
+renderAIRecs();
+renderCurrentSkills();
+renderOffers();
+renderTopMatches();
+renderNotifications();
+</script>
+</body>
+</html>
