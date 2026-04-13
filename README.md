@@ -1,4 +1,4 @@
-# 🚀 HireTrack – Smart Job Application Tracker
+
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0f2027,50:2c5364,100:00c2ff&height=250&section=header&text=HireTrack&fontSize=45&fontAlignY=35&animation=fadeIn&fontColor=ffffff" />
 <p align="center">
   <img src="https://readme-typing-svg.herokuapp.com?size=24&duration=3000&color=00C2FF&center=true&vCenter=true&width=600&lines=Smart+Job+Tracker;Kanban+Board+System;Smooth+UI+Animations;Built+with+React+%26+Framer+Motion" />
