@@ -1,4 +1,7 @@
 # 🚀 HireTrack – Smart Job Application Tracker
+<p align="center">
+  <img src="https://readme-typing-svg.herokuapp.com?size=24&duration=3000&color=00C2FF&center=true&vCenter=true&width=600&lines=Smart+Job+Tracker;Kanban+Board+System;Smooth+UI+Animations;Built+with+React+%26+Framer+Motion" />
+</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Frontend-React-blue?style=for-the-badge&logo=react" />
