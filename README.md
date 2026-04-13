@@ -1,62 +1,165 @@
-## 🎬 Advanced Transitions & Animations
+# 🚀 HireTrack – Smart Job Application Tracker
 
-HireTrack incorporates modern UI animations to provide a smooth, responsive, and engaging user experience.
+<p align="center">
+  <img src="https://img.shields.io/badge/Frontend-React-blue?style=for-the-badge&logo=react" />
+  <img src="https://img.shields.io/badge/Animations-Framer%20Motion-purple?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/UI-TailwindCSS-38bdf8?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Drag%20%26%20Drop-React%20DnD-orange?style=for-the-badge" />
+</p>
 
 ---
+
+## 📌 Overview
+
+**HireTrack** is a modern job application tracking system designed to help users manage, track, and visualize their job applications efficiently.
+
+It combines **interactive UI, smooth animations, and intuitive workflows** to deliver a production-like user experience.
+
+---
+
+## 🎯 Key Features
+
+### 📊 Dashboard
+
+* Animated statistics with count-up effect
+* Smooth card transitions
+* Clean and responsive layout
+
+### 📌 Kanban Board
+
+* Drag-and-drop job tracking
+* Real-time visual updates
+* Smooth reordering animations
+
+### 🪟 Modal System
+
+* Animated open/close transitions
+* Focused interaction design
+
+### 🔔 Notifications
+
+* Toast alerts with slide + fade animations
+
+### ⏳ Loading States
+
+* Skeleton loaders for better UX
+* Perceived performance improvement
+
+---
+
+## 🎬 Animations & UX
 
 ### ✨ Micro-Interactions
-- Button click ripple / scale feedback  
-- Input focus animations  
-- Sidebar active state transitions  
-- Subtle shadow and glow effects  
 
----
+* Button hover & click feedback
+* Input focus animations
+* Sidebar transitions
 
 ### 🧩 Component Animations
-- Dashboard cards fade-in on load  
-- Staggered animation for job cards  
-- Smooth modal open/close transitions  
-- Toast notifications with slide + fade  
 
----
+* Fade-in dashboard cards
+* Staggered job list animations
+* Smooth modal transitions
 
-### 📌 Kanban Enhancements
-- Smooth drag-and-drop transitions  
-- Animated card reordering  
-- Drop highlight indicators  
-- Column hover effects  
+### 📱 Responsive Motion
 
----
-
-### 🔄 State & Data Animations
-- Skeleton loaders while fetching jobs  
-- Progress indicators for AI processing  
-- Smooth number count-up animations (stats)  
-
----
-
-### 📱 Responsive Animations
-- Sidebar slide-in (mobile view)  
-- Collapsible sections with smooth height transition  
-- Horizontal scroll snapping for Kanban  
-
----
+* Mobile sidebar slide-in
+* Collapsible sections
+* Scroll snapping
 
 ### ⚡ Performance Optimization
-- GPU-accelerated animations using `transform` & `opacity`  
-- Minimal reflow/repaint for smooth performance  
-- Lazy loading for animation-heavy components  
+
+* GPU-accelerated animations
+* Minimal reflow & repaint
+* Lazy rendering
 
 ---
 
-### 🛠️ Libraries Used (if applicable)
-- Framer Motion (for advanced animations)  
-- Tailwind CSS (utility-based transitions)  
-- React Beautiful DnD (drag-and-drop animations)  
+## 🛠️ Tech Stack
+
+* **Frontend:** React
+* **Animations:** Framer Motion
+* **Styling:** Tailwind CSS
+* **Drag & Drop:** React Beautiful DnD
 
 ---
 
-### 🎯 UX Impact
-- Improves user engagement  
-- Provides clear visual feedback  
-- Makes the application feel production-ready  
+## 📂 Project Structure
+
+```
+src/
+ ├── App.js
+ ├── components/
+ │    ├── Sidebar.js
+ │    ├── Dashboard.js
+ │    ├── Kanban.js
+ │    ├── Modal.js
+ │    ├── Toast.js
+ │    ├── Skeleton.js
+ │    ├── Counter.js
+```
+
+---
+
+## ⚙️ Installation & Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/hiretrack.git
+
+# Navigate to project
+cd hiretrack
+
+# Install dependencies
+npm install
+
+# Run the app
+npm start
+```
+
+---
+
+## 📸 Demo
+
+> 🚨 Add your project GIF or screenshots here (VERY IMPORTANT)
+
+Example:
+
+```
+![Demo](./assets/demo.gif)
+```
+
+---
+
+## 🎯 UX Impact
+
+✔ Improves user engagement
+✔ Provides real-time visual feedback
+✔ Enhances usability with animations
+✔ Feels like a production-ready application
+
+---
+
+## 🚀 Future Enhancements
+
+* 🔐 Authentication system
+* ☁️ Backend integration (Node.js / Firebase)
+* 📊 Real-time analytics dashboard
+* 🤖 AI-based job recommendations
+
+---
+
+## 👩‍💻 Author
+
+**Your Name**
+
+* GitHub: https://github.com/your-username
+* LinkedIn: https://linkedin.com/in/your-profile
+
+---
+
+## ⭐ Show Your Support
+
+If you like this project, consider giving it a ⭐ on GitHub!
+
+---
