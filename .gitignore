@@ -1,0 +1,7 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Future use (safe to keep)
+node_modules/
+.env
