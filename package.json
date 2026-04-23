@@ -1,0 +1,11 @@
+{
+  "name": "hiretrack-job-tracker",
+  "version": "1.0.0",
+  "description": "Smart Job Tracker UI",
+  "main": "index.html",
+  "scripts": {
+    "start": "live-server"
+  },
+  "author": "Shruti",
+  "license": "MIT"
+}
