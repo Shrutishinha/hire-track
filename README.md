@@ -1,7 +1,7 @@
 <!-- 🔥 HEADER WAVE -->
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0f2027,50:2c5364,100:00c2ff&height=250&section=header&text=HireTrack&fontSize=45&fontAlignY=35&animation=fadeIn&fontColor=ffffff" />
-hi
+
 <!-- ⚡ TYPING HEADER -->
 
 <p align="center">
