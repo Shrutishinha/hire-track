@@ -17,12 +17,12 @@
   <img src="https://img.shields.io/badge/Drag%20%26%20Drop-React%20DnD-orange?style=for-the-badge" />
 </p>
 
----
+
 ---
 <!-- 🌟 TRANSITION -->
 
 <img src="https://user-images.githubusercontent.com/74038190/212284103-2f1c7f6e-9c7f-4f9a-9d5c-8f3f5b3e9b7e.gif" width="100%">
-
+---
 ## 📌 Overview
 
 **HireTrack** is a modern job application tracking system designed to help users manage, track, and visualize their job applications efficiently.
