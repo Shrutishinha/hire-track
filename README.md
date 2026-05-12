@@ -33,7 +33,6 @@ It combines **interactive UI, smooth animations, and intuitive workflows** to de
   <img src="https://readme-typing-svg.herokuapp.com?size=18&duration=2000&color=00C2FF&center=true&width=500&lines=Fast+%7C+Interactive+%7C+Modern;Built+for+Real+Users;Production+Ready+UI" />
 </p>
 
----
 
 <p align="center">
   <img src="https://svg-banners.vercel.app/api?type=rainbow&width=800&height=10" />
