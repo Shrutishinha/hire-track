@@ -5,7 +5,7 @@
 <!-- ⚡ TYPING HEADER -->
 
 <p align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?size=24&duration=3000&color=00C2FF&center=true&vCenter=true&width=700&lines=Smart+Job+Tracker;Kanban+Board+System;Smooth+UI+Animations;Built+with+React+%26+Framer+Motion" />
+  <img src="https://readme-typing-svg.herokuapp.comsize=24&duration=3000&color=00C2FF&center=true&vCenter=true&width=700&lines=Smart+Job+Tracker;Kanban+Board+System;Smooth+UI+Animations;Built+with+React+%26+Framer+Motion" />
 </p>
 
 <!-- 🧠 BADGES -->
