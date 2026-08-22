@@ -5,9 +5,11 @@
 <!-- ⚡ TYPING HEADER -->
 
 <p align="center">
-  <img src="https://readme-typing-svg.herokuapp.comsize=24&duration=3000&color=00C2FF&center=true&vCenter=true&width=700&lines=Smart+Job+Tracker;Kanban+Board+System;Smooth+UI+Animations;Built+with+React+%26+Framer+Motion" />
+  <img 
+    src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=24&duration=3000&pause=1000&color=00C2FF&center=true&vCenter=true&width=750&lines=Smart+Job+Tracker;Kanban+Board+System;Track+Applications+Effortlessly;Smooth+UI+Animations;Built+with+React+%26+Framer+Motion"
+    alt="Typing SVG"
+  />
 </p>
-
 <!-- 🧠 BADGES -->
 
 <p align="center">
